@@ -5,12 +5,15 @@ FROM tensorflow/tensorflow:2.10.0-gpu
 WORKDIR /app
 
 # Install necessary packages
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0
+
 RUN pip install --no-cache-dir \
     kaggle \
     kagglehub \
     mediapipe \
     opencv-python \
-    numpy
+    numpy \
+    scikit-learn 
 
 # Copy the kaggle.json API key file to the container (you should already have this file)
 COPY kaggle.json /root/.kaggle/kaggle.json
@@ -19,11 +22,11 @@ COPY kaggle.json /root/.kaggle/kaggle.json
 RUN chmod 600 /root/.kaggle/kaggle.json
 
 # Install additional requirements from the requirements.txt if you have it
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+# COPY requirements.txt /app/
+# RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your application code
-COPY . /app
+# COPY . /app
 
 # Set the command to run your training script by default
-CMD ["python", "train.py"]
+CMD ["python", "scripts/preprocessing.py"]
