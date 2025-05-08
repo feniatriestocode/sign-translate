@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ASL Sign Detection</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <h1>ASL Sign Detection</h1>
+  <video id="webcam" autoplay playsinline width="300" height="225"></video>
+  <p>Prediction: <span id="prediction">Loading...</span></p>
+</body>
+</html>
