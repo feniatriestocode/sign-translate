@@ -2,13 +2,23 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+import joblib
 
 # 1. Load the preprocessed data
 X = np.load("../workspace/X.npy")  # Landmark features
 y = np.load("../workspace/y.npy")  # One-hot encoded labels (if you did one-hot encoding)
 
-# 2. Split the data into training and validation sets
+# Assume X contains your features (e.g., MediaPipe landmarks)
+# Normalize the entire dataset
+scaler = MinMaxScaler()
+# Split the normalized data into training and validation sets
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
+joblib.dump(scaler, '../workspace/minmax_scaler.pkl')
+print("After saving, min_ seen by scaler:", scaler.min_) 
 
 # 3. Build the model (a simple feed-forward neural network)
 model = keras.Sequential([
@@ -34,8 +44,7 @@ history = model.fit(
 )
 
 # Optionally save the trained model
-model.save("../models/asl_model.h5")
-import matplotlib.pyplot as plt
+model.save("../models/asl_model_norm.h5")
 
 # Plot training & validation accuracy values
 plt.plot(history.history['accuracy'], label='Training Accuracy')

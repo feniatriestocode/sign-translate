@@ -6,12 +6,12 @@ from tqdm import tqdm
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
-print("Path to dataset files:", os.path.abspath("data/asl_alphabet_train"))
+print("Path to dataset files:", os.path.abspath("../data/asl_alphabet_train"))
 
 
-DATASET_DIR = os.path.relpath("data/asl_alphabet_train")
-OUTPUT_X = "workspace/X.npy"
-OUTPUT_Y = "workspace/y.npy"
+DATASET_DIR = os.path.relpath("../data/asl_alphabet_train")
+OUTPUT_X = "../workspace/X.npy"
+OUTPUT_Y = "../workspace/y.npy"
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1)
@@ -28,7 +28,7 @@ def extract_landmarks(image):
         return [coord for lm in hand_landmarks.landmark for coord in (lm.x, lm.y, lm.z)]
     return None
 
-for label_folder in os.listdir(DATASET_DIR):
+for label_folder in sorted(os.listdir(DATASET_DIR)):
     label_path = os.path.join(DATASET_DIR, label_folder)
     if not os.path.isdir(label_path):
         continue  # Skip non-directories
@@ -54,7 +54,7 @@ X = np.array(X)
 # Label encoding (integer encoding)
 le = LabelEncoder()
 y_int = le.fit_transform(y)  # Converts labels like 'A', 'B' to 0, 1, ...
-
+print(f"Label mapping: {dict(zip(le.classes_, range(len(le.classes_))))}")
 # Optionally, use one-hot encoding
 y_onehot = to_categorical(y_int)  # Converts to one-hot vectors
 
