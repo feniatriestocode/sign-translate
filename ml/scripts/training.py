@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import joblib
+from tensorflow.keras.callbacks import EarlyStopping
 
 # 1. Load the preprocessed data
 X = np.load("../workspace/X.npy")  # Landmark features
@@ -19,6 +20,13 @@ X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 joblib.dump(scaler, '../workspace/minmax_scaler.pkl')
 print("After saving, min_ seen by scaler:", scaler.min_) 
+
+early_stop = EarlyStopping(
+    monitor='val_loss',   # You can also monitor 'val_accuracy'
+    patience=5,           # Number of epochs to wait for improvement
+    restore_best_weights=True  # Roll back to the best weights seen
+)
+
 
 # 3. Build the model (a simple feed-forward neural network)
 model = keras.Sequential([
@@ -40,7 +48,8 @@ history = model.fit(
     X_train, y_train,  # Training data
     epochs=100,  # Number of epochs to train
     validation_data=(X_val, y_val),  # Validation data to track accuracy
-    batch_size=32  # Batch size for training
+    batch_size=32,  # Batch size for training
+    callbacks=[early_stop]
 )
 
 # Optionally save the trained model

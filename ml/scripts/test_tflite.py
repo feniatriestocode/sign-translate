@@ -7,18 +7,24 @@ from sklearn.preprocessing import MinMaxScaler
 import mediapipe as mp
 import joblib
 
-# Load the previously fitted scaler
+# Load scaler
 scaler = joblib.load('../workspace/minmax_scaler.pkl')
-# Load model
-model = tf.keras.models.load_model('../models/asl_model_norm.h5')
+
+# Load the TFLite model
+interpreter = tf.lite.Interpreter(model_path='../models/asl_model_norm.tflite')
+interpreter.allocate_tensors()
+
+# Get input and output tensor details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 # MediaPipe setup
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True)
 
-# Your image-label map (update with real labels)
-image_labels = {
-    'A_test.jpg': 0,
+# Image-label map (same as original script)
+image_labels = { 
+     'A_test.jpg': 0,
     'B_test.jpg': 1,
     'C_test.jpg': 2,
     'D_test.jpg': 3,
@@ -130,10 +136,10 @@ image_labels = {
     'aug2_space_test.jpg':28,
     'aug_space_test.jpg': 28,
     'space_test.jpg': 28
-}
+}  
 
-# Folder with test images (original or augmented)
-image_folder = '../data/asl_alphabet_test'  # Update with your test folder
+# Folder with test images
+image_folder = '../data/asl_alphabet_test'
 
 X_test = []
 y_test = []
@@ -146,29 +152,33 @@ def extract_landmarks(img):
         return np.array([[lm.x, lm.y, lm.z] for lm in hand.landmark]).flatten()
     return None
 
-# Process each image
+# Process test images
 for filename, label in image_labels.items():
     path = os.path.join(image_folder, filename)
     img = cv2.imread(path)
     if img is None:
         continue
-
     landmarks = extract_landmarks(img)
     if landmarks is not None:
         X_test.append(landmarks)
         y_test.append(label)
 
-# Final arrays
 X_test = np.array(X_test)
 y_test = np.array(y_test)
-
-# Apply the same scaler to test data
 X_test_scaled = scaler.transform(X_test)
 
-# Predict
-y_pred_probs = model.predict(X_test_scaled)
-y_pred = np.argmax(y_pred_probs, axis=1)
+# Predict using TFLite interpreter
+y_pred = []
+
+for sample in X_test_scaled:
+    sample = sample.astype(np.float32).reshape(1, -1)  # TFLite expects float32
+    interpreter.set_tensor(input_details[0]['index'], sample)
+    interpreter.invoke()
+    output = interpreter.get_tensor(output_details[0]['index'])
+    y_pred.append(np.argmax(output))
+
+y_pred = np.array(y_pred)
 
 # Evaluate
 acc = accuracy_score(y_test, y_pred)
-print("✅ Test Accuracy:", acc)
+print("TFLite Test Accuracy:", acc)
