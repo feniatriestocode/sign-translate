@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from sklearn.preprocessing import MinMaxScaler
 import mediapipe as mp
 import joblib
@@ -171,4 +171,11 @@ y_pred = np.argmax(y_pred_probs, axis=1)
 
 # Evaluate
 acc = accuracy_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred, average='weighted')
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
 print("✅ Test Accuracy:", acc)
+print("✅ Test F1 Score:", f1)
+print("✅ Test Precision:", precision)
+print("✅ Test Recall:", recall)
+

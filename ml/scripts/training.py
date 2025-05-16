@@ -1,4 +1,5 @@
 import numpy as np
+import json
 import tensorflow as tf
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
@@ -19,7 +20,19 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_st
 X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 joblib.dump(scaler, '../workspace/minmax_scaler.pkl')
-print("After saving, min_ seen by scaler:", scaler.min_) 
+# Extract parameters and save as JSON
+scaler_params = {
+    'min_': scaler.min_.tolist(),
+    'scale_': scaler.scale_.tolist(),
+    'data_min_': scaler.data_min_.tolist(),
+    'data_max_': scaler.data_max_.tolist(),
+    'feature_range': scaler.feature_range
+}
+
+with open('../webapp/minmax_scaler.json', 'w') as f:
+    json.dump(scaler_params, f)
+
+print("Scaler parameters exported to JSON")
 
 early_stop = EarlyStopping(
     monitor='val_loss',   # You can also monitor 'val_accuracy'
@@ -28,11 +41,21 @@ early_stop = EarlyStopping(
 )
 
 
-# 3. Build the model (a simple feed-forward neural network)
+# # 3. Build the model (a simple feed-forward neural network)
+# model = keras.Sequential([
+#     keras.layers.Input(shape=(63,)),  # 63 features (hand landmarks x,y,z)
+#     keras.layers.Dense(128, activation='relu'),
+#     keras.layers.Dense(64, activation='relu'),
+#     keras.layers.Dense(y.shape[1], activation='softmax')  # Output layer: one unit per class
+# ])
 model = keras.Sequential([
-    keras.layers.Input(shape=(63,)),  # 63 features (hand landmarks x,y,z)
+    keras.layers.Reshape((21, 3, 1), input_shape=(63,)),  # Reshape to 21 landmarks with 3 coordinates (x, y, z)
+    keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same'),
+    keras.layers.MaxPooling2D((2, 1)),
+    keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+    keras.layers.MaxPooling2D((2, 1)),
+    keras.layers.Flatten(),
     keras.layers.Dense(128, activation='relu'),
-    keras.layers.Dense(64, activation='relu'),
     keras.layers.Dense(y.shape[1], activation='softmax')  # Output layer: one unit per class
 ])
 
@@ -75,5 +98,5 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-print("Training complete. Model saved as 'asl_model.h5'")
+print("Training complete. Model saved as 'asl_model_norm.h5'")
 
