@@ -1,1 +1,1 @@
-# sign-translate
+# Sign language recognition using Mediapipe Hands
