@@ -22,7 +22,7 @@ The system recognizes ASL characters by detecting hand landmarks using MediaPipe
 The straightforward organization of the file structure of the project serves as an outline of its implementation.
 root
 │
-├── preprocessing.py
+├── preprocessing.py \
 ├── training.py
 ├── testing.py
 ├── test_tflite.py
