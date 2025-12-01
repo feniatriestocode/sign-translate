@@ -19,31 +19,31 @@ This project implements a complete workflow for American Sign Language (ASL) han
 
 The system recognizes ASL characters by detecting hand landmarks using MediaPipe Hands and classifying them with a trained neural network. The workflow begins with transforming raw images into landmark vectors, continues with training a convolutional model, and ends with lightweight deployment options including TensorFlow Lite and TensorFlow.js.
 
-The straightforward organization of the file structure of the project serves as an outline of its implementation.
-root
-│
+The straightforward organization of the file structure of the project serves as an outline of its implementation.\
+root\
+│\
 ├── preprocessing.py \
-├── training.py
-├── testing.py
-├── test_tflite.py
-├── tfliteconversion.py
-│
-├── models/
-│   ├── asl_model_norm.h5
-│   └── asl_model_norm.tflite
-│
-├── workspace/
-│   ├── X.npy
-│   ├── y.npy
-│   ├── minmax_scaler.pkl
-│
-├── webapp/
-│   ├── index.html
-│   ├── app.js
-│   ├── model.json
-│   ├── minmax_scaler.json
-│
-└── Dockerfile
+├── training.py\
+├── testing.py\
+├── test_tflite.py\
+├── tfliteconversion.py\
+│\
+├── models/\
+│   ├── asl_model_norm.h5\
+│   └── asl_model_norm.tflite\
+│\
+├── workspace/\
+│   ├── X.npy\
+│   ├── y.npy\
+│   ├── minmax_scaler.pkl\
+│\
+├── webapp/\
+│   ├── index.html\
+│   ├── app.js\
+│   ├── model.json\
+│   ├── minmax_scaler.json\
+│\
+└── Dockerfile\
 
 ## Data Preprocessing
 
