@@ -4,16 +4,17 @@ This project implements a complete workflow for American Sign Language (ASL) han
 ## Table of Contents
 
 1. Overview
-2. Data Preprocessing
-3. Model Training
-4. Model Evaluation
-5. TensorFlow Lite Conversion
-6. TFLite Model Evaluation
-7. Web Application  
+2. Installation
+3. Data Preprocessing
+4. Model Training
+5. Model Evaluation
+6. TensorFlow Lite Conversion
+7. TFLite Model Evaluation
+8. Web Application  
    - Frontend (HTML)  
    - Inference Logic (JavaScript)
-8. Docker Deployment
-9. End-to-End Workflow
+9. Docker Deployment
+10. End-to-End Workflow
 
 ## Overview
 
@@ -44,6 +45,29 @@ root\
 │   ├── minmax_scaler.json\
 │\
 └── Dockerfile\
+
+## Quick Start
+1. Clone the repository
+   ```
+   git clone https://github.com/feniatriestocode/sign-translate.git
+   ```
+2. Navigate to to the webapp directory
+   ```
+   cd sign-translate/docs
+   ```
+4. Start the local Server
+   ```
+   python3 -m http.server
+   ```
+   
+## End-to-End Workflow
+
+1. Run `preprocessing.py` to generate `X.npy` and `y.npy`.  
+2. Train the model using `training.py`.  
+3. Evaluate the model with `testing.py`.  
+4. Convert the model using `tfliteconversion.py`.  
+5. Optionally test the TFLite model using `test_tflite.py`.  
+6. Open `webapp/index.html` to run real-time ASL detection in the browser.
 
 ## Data Preprocessing
 
@@ -117,11 +141,3 @@ The browser application performs:
 
 Used to package the environment required for preprocessing, training, or serving the web application.
 
-## End-to-End Workflow
-
-1. Run `preprocessing.py` to generate `X.npy` and `y.npy`.  
-2. Train the model using `training.py`.  
-3. Evaluate the model with `testing.py`.  
-4. Convert the model using `tfliteconversion.py`.  
-5. Optionally test the TFLite model using `test_tflite.py`.  
-6. Open `webapp/index.html` to run real-time ASL detection in the browser.
